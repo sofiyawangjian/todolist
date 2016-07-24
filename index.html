@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>todolist</title>
+	<style>
+	  body,ul,li,input{margin: 0;padding: 0;
+	    border: none;
+	    list-style: none;}
+	  body{background: #CDCDCD}
+      .top{width: 100%;
+           height: 40px;
+           font-size: 24px;
+           background: rgba(0,0,0,0.8);}
+       .topcon{width: 600px;margin: 0 auto;
+               height: 100%;color: #fff;
+               line-height: 40px;}
+       .sr{width: 350px;
+           height: 26px;
+           display: inline-block;
+           float: right;
+           margin-top: 5px;
+           border-radius: 5px;
+           padding-left: 10px;
+           color: #ccc;}
+        .now-box{width: 600px;min-height: 70px;
+                 line-height: 70px;
+                 font-size: 22px;
+                 font-family: "微软雅黑";
+                 margin: 0 auto;}
+        .com-box{width: 600px;min-height: 70px;
+                 line-height: 70px;
+                 font-size: 22px;
+                 font-family: "微软雅黑";
+                 margin: 0 auto;} 
+        .nownumber,.comnumber{float: right;
+                 width: 22px;
+                 height: 22px;
+                 border-radius: 50%;background: #E6E6FA;
+                 font-size: 16px;
+                 line-height: 22px;
+                 text-align: center;
+                 margin-top: 25px;}
+        .now-list li{width: 600px;height: 35px;
+                      background: #fff;
+                      border-left: 5px solid #629A9C;
+                      border-radius: 4px;
+                      margin-top: 10px;
+                      box-sizing:border-box;
+                      padding-left: 10px;
+                      font-size: 16px;
+                      line-height: 35px;}
+        .com-list li{width: 600px;height: 35px;
+        	          opacity: 0.7;
+                      background: #fff;
+                      border-left: 5px solid #629A9C;
+                      border-radius: 4px;
+                      margin-top: 10px;
+                      box-sizing:border-box;
+                      padding-left: 10px;
+                      font-size: 16px;
+                      line-height: 35px;}
+        .xuanze{width: 25px;height: 25px;
+                margin: 0px 10px 0 0;
+                vertical-align: middle;}    
+         .del{float: right; width: 16px;height: 12px;
+             border: 1px solid #ccc;
+             padding:5px;
+             background: #ccc;
+             margin: 6px 5px 0 0;
+             background-origin: content-box;
+             background-clip: content-box;
+             border-radius: 50%;
+             position: relative;
+             }
+         .del div{width: 18px;height: 2px;
+                  background:#fff;
+                  position: absolute;
+                  top:10px;
+                  left: 5px;}
+	</style>
+</head>
+<body>
+	<div class="top">
+		<div class="topcon">
+			<span>ToDoList</span>
+			<input type="text" class="sr" placeholder='请添加Todo'>
+		</div>
+		<div class="now-box">
+			<div class="nowtitle">
+				 <span>正在进行</span>
+				 <div class="nownumber">1
+				 </div>
+			</div>
+			<div class="now-content">
+				<ul class="now-list">
+					
+				</ul>
+			</div>
+		</div>
+		<div class="com-box">
+			<div class="nowtitle">
+				 <span>已经完成</span>
+				 <div class="comnumber">2
+				 </div>
+			</div>
+			<div class="now-content">
+				<ul class="com-list">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+	var sr=document.querySelector('.sr');
+	var comlist=document.querySelector('.com-list')
+	var nowlist=document.querySelector('.now-list')
+	var nownumber=document.querySelector('.nownumber')
+	var comnumber=document.querySelector('.comnumber')
+	function getData(){
+		var data=JSON.parse(localStorage.getItem('todos'));
+		return data||[];
+	}
+	function saveData(data){
+		localStorage.setItem('todos',JSON.stringify(data))
+	}
+	sr.onkeydown=function(e){
+       if(e.keyCode==13){
+       	 var val=this.value;
+       	 if(val.length==0){
+       	 	alert("不能为空")
+       	 	return;
+       	 }
+       	 var data=getData();
+       	 data.push({title:val,
+       	            status:false})
+       	 saveData(data)
+         reload();
+       }
+	}
+  function change(i,sta){
+     var data=getData();
+     data[i].status=sta;
+     saveData(data);
+     reload();
+  }
+  function del(i){
+     var data=getData();
+     data.splice(i,1) ;
+     saveData(data);
+     reload();
+   }
+
+	function reload(){
+		var data=getData();
+		var nowStr="",nowNum=0,comStr="",comNum=0;
+		for(var i=0;i<data.length;i++){
+			if(data[i].status==false){
+			nowStr+='<li><input type="checkbox" class="xuanze" onclick=change('+i+',true)><span>'+data[i].title+'</span><div class="del"><div onclick=del('+i+')></div></div></li>';
+         nowNum++;
+			}else{
+        comStr+='<li><input type="checkbox" class="xuanze" checked onclick=change('+i+',false)><span>'+data[i].title+'</span><div class="del"><div onclick=del('+i+')></div></div></li>'
+        comNum++;
+      }
+		}
+    nowlist.innerHTML=nowStr;
+    nownumber.innerHTML=nowNum;
+    comlist.innerHTML=comStr;
+    comnumber.innerHTML=comNum;       
+	}
+  reload()
+	console.log(getData())
+
+
+</script>
+</html>
